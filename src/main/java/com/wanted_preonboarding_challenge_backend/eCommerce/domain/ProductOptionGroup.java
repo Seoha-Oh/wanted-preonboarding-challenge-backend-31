@@ -1,0 +1,42 @@
+package com.wanted_preonboarding_challenge_backend.eCommerce.domain;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "product_option_group")
+@Getter
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+public class ProductOptionGroup {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder;
+
+    @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ProductOption> options = new ArrayList<>();
+
+
+    public void addOption(ProductOption option) {
+        option.changeOptionGroup(this);
+        options.add(option);
+    }
+
+    public void changeProduct(Product product) {
+        this.product = product;
+    }
+}

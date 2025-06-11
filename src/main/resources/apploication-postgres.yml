@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/challenge
+    username: challenge_user
+    password: challenge1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
