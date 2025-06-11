@@ -3,40 +3,64 @@ package com.wanted_preonboarding_challenge_backend.eCommerce.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
-@Table(name = "product_price")
+@Table(name = "product_prices")
 @Getter
+@Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
 public class ProductPrice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false, unique = true)
     private Product product;
 
-    private Double basePrice;
-    private Double salePrice;
-    private Double costPrice;
-    private String currency;
-    private Double taxRate;
+    @Column(name = "base_price", nullable = false, precision = 19, scale = 2)
+    private BigDecimal basePrice;
 
-    public void addProduct(Product product){
-        this.product = product;
+    @Column(name = "sale_price", precision = 19, scale = 2)
+    private BigDecimal salePrice;
 
-        if(product.getPrice() != this){
-            product.addProductPrice(this);
+    @Column(name = "cost_price", precision = 19, scale = 2)
+    private BigDecimal costPrice;
+
+    @Column(length = 3, nullable = false)
+    @Builder.Default
+    private String currency = "KRW";
+
+    @Column(name = "tax_rate", precision = 5, scale = 2)
+    private BigDecimal taxRate;
+
+    // Helper method to calculate discount percentage
+    @Transient
+    public Integer getDiscountPercentage() {
+        if (basePrice == null || salePrice == null || basePrice.compareTo(BigDecimal.ZERO) <= 0) {
+            return 0;
         }
+
+        if (salePrice.compareTo(basePrice) >= 0) {
+            return 0;
+        }
+
+        BigDecimal discount = basePrice.subtract(salePrice);
+        BigDecimal percentage = discount.multiply(new BigDecimal("100")).divide(basePrice, 0, BigDecimal.ROUND_HALF_UP);
+
+        return percentage.intValue();
     }
 
-    public void update(Double basePrice, Double salePrice, Double costPrice, String currency, Double taxRate) {
-        this.basePrice = basePrice;
-        this.salePrice = salePrice;
-        this.costPrice = costPrice;
-        this.currency = currency;
-        this.taxRate = taxRate;
-    }
+//    public void update(Double basePrice, Double salePrice, Double costPrice, String currency, Double taxRate) {
+//        this.basePrice = basePrice;
+//        this.salePrice = salePrice;
+//        this.costPrice = costPrice;
+//        this.currency = currency;
+//        this.taxRate = taxRate;
+//    }
 }
+

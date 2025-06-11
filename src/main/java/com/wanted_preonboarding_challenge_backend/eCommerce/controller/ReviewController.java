@@ -1,68 +1,96 @@
 package com.wanted_preonboarding_challenge_backend.eCommerce.controller;
 
-import com.wanted_preonboarding_challenge_backend.eCommerce.dto.common.ApiResponse;
-import com.wanted_preonboarding_challenge_backend.eCommerce.dto.review.request.ReviewCreateRequest;
-import com.wanted_preonboarding_challenge_backend.eCommerce.dto.review.request.ReviewUpdateRequest;
-import com.wanted_preonboarding_challenge_backend.eCommerce.dto.review.response.ReviewCreateResponse;
-import com.wanted_preonboarding_challenge_backend.eCommerce.dto.review.response.ReviewGetResponse;
-import com.wanted_preonboarding_challenge_backend.eCommerce.dto.review.response.ReviewUpdateResponse;
+
+import com.wanted_preonboarding_challenge_backend.eCommerce.controller.dto.ApiResponse;
+import com.wanted_preonboarding_challenge_backend.eCommerce.controller.dto.ReviewCreateRequest;
+import com.wanted_preonboarding_challenge_backend.eCommerce.controller.dto.ReviewUpdateRequest;
+import com.wanted_preonboarding_challenge_backend.eCommerce.controller.mapper.ReviewControllerMapper;
 import com.wanted_preonboarding_challenge_backend.eCommerce.service.ReviewService;
+import com.wanted_preonboarding_challenge_backend.eCommerce.service.dto.PaginationDto;
+import com.wanted_preonboarding_challenge_backend.eCommerce.service.dto.ReviewDto;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
-@RequestMapping()
-@RequiredArgsConstructor
+@RequestMapping("/api")
+@AllArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final ReviewControllerMapper mapper;
 
-    @GetMapping("/api/products/{id}/reviews")
-    public ResponseEntity<ApiResponse<ReviewGetResponse>> getReviewByProduct(
-            @PathVariable Long id,
+
+    @GetMapping("/products/{productId}/reviews")
+    public ResponseEntity<?> getProductReviews(
+            @PathVariable Long productId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int perPage,
             @RequestParam(defaultValue = "created_at:desc") String sort,
-            @RequestParam Integer rating) {
-        ReviewGetResponse response = reviewService.getReviews(id, page, perPage, sort, rating);
+            @RequestParam(required = false) Integer rating) {
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.ok(response, "상품 리뷰를 성공적으로 조회했습니다."));
+        var paginationRequest = PaginationDto.PaginationRequest.builder()
+                .page(page)
+                .size(perPage)
+                .sort(sort)
+                .build();
+
+        // 서비스 호출
+        ReviewDto.ReviewPage reviewsPage = reviewService.getProductReviews(productId, rating, paginationRequest);
+
+        return ResponseEntity.ok(ApiResponse.success(reviewsPage, "상품 리뷰를 성공적으로 조회했습니다."));
     }
 
-    @PutMapping("/api/products/{id}/reviews")
-    public ResponseEntity<ApiResponse<ReviewCreateResponse>> writeReview(
-            @PathVariable Long reviewId,
+    @PostMapping("/products/{productId}/reviews")
+    public ResponseEntity<?> createReview(
+            @PathVariable Long productId,
             @RequestBody ReviewCreateRequest request) {
 
-        ReviewCreateResponse response = reviewService.writeReview(reviewId, request);
+        // 인증 관련 로직 (실제로는 Spring Security 등을 통해 구현)
+        Long userId = 1L; // 임시로 고정된 사용자 ID 사용
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(response, "리뷰가 성공적으로 등록되었습니다."));
+        // DTO 변환
+        ReviewDto.CreateRequest serviceDto = mapper.toReviewDtoCreateRequest(request);
+
+        // 서비스 호출
+        ReviewDto.Review response = reviewService.createReview(productId, userId, serviceDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success(response, "리뷰가 성공적으로 등록되었습니다."));
     }
 
-    @PostMapping("/api/reviews/{id}")
-    public ResponseEntity<ApiResponse<ReviewUpdateResponse>> updateReview(
+    @PutMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> updateReview(
             @PathVariable Long reviewId,
             @RequestBody ReviewUpdateRequest request) {
 
-        ReviewUpdateResponse response = reviewService.updateReview(reviewId, request);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.ok(response, "리뷰가 성공적으로 수정되었습니다."));
+        // 인증 관련 로직 (실제로는 Spring Security 등을 통해 구현)
+        Long userId = 1L; // 임시로 고정된 사용자 ID 사용
+
+        // DTO 변환
+        ReviewDto.UpdateRequest serviceDto = mapper.toReviewDtoUpdateRequest(request);
+
+        // 서비스 호출
+        ReviewDto.Review response = reviewService.updateReview(reviewId, userId, serviceDto);
+
+        return ResponseEntity.ok(ApiResponse.success(response, "리뷰가 성공적으로 수정되었습니다."));
     }
 
-    @DeleteMapping("/api/reviews/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteReview(
-            @PathVariable Long reviewId) {
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId) {
 
-        reviewService.deleteReview(reviewId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ApiResponse.ok(null, "리뷰가 성공적으로 삭제되었습니다."));
+        // 인증 관련 로직 (실제로는 Spring Security 등을 통해 구현)
+        Long userId = 1L; // 임시로 고정된 사용자 ID 사용
+
+        // 서비스 호출
+        reviewService.deleteReview(reviewId, userId);
+
+        return ResponseEntity.ok(ApiResponse.success(null, "리뷰가 성공적으로 삭제되었습니다."));
     }
 }

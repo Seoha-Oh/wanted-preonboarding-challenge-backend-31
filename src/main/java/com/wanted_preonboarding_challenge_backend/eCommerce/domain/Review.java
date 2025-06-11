@@ -2,40 +2,60 @@ package com.wanted_preonboarding_challenge_backend.eCommerce.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "review")
+@Table(name = "reviews")
 @Getter
-@Builder
-@AllArgsConstructor
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Review {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private Long userId;  // 유저 엔티티가 별도로 없으므로 ID로 처리
-    private Integer rating;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
+    private Integer rating; // 1-5
+
+    @Column(length = 200)
     private String title;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    private Boolean verifiedPurchase;
-    private Integer helpfulVotes;
 
+    @Column(name = "verified_purchase", nullable = false)
+    private boolean verifiedPurchase;
 
-    public void updateReview(Integer rating, String title, String content){
-        this.rating = rating;
-        this.title = title;
-        this.content = content;
+    @Column(name = "helpful_votes", nullable = false)
+    @Builder.Default
+    private Integer helpfulVotes = 0;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-    public void writeReview(Product product){
-        this.product = product;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }

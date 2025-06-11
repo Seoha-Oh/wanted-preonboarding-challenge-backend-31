@@ -17,23 +17,26 @@ public class ProductOptionGroup {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "display_order", nullable = false)
     private Integer displayOrder;
 
     @OneToMany(mappedBy = "optionGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProductOption> options = new ArrayList<>();
 
-    public void addProduct(Product product){
-        this.product = product;
-    }
-    public void addOption(ProductOption option){
-        options.add(option);
 
-        if(option.getOptionGroup() != this){
-            option.addOptionGroup(this);
-        }
+    public void addOption(ProductOption option) {
+        option.changeOptionGroup(this);
+        options.add(option);
+    }
+
+    public void changeProduct(Product product) {
+        this.product = product;
     }
 }
