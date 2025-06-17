@@ -8,11 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "product_option")
+@Table(name = "product_options")
 @Getter
+@Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
 public class ProductOption {
 
     @Id
@@ -41,39 +42,4 @@ public class ProductOption {
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ProductImage> images = new ArrayList<>();
-
-
-    public void updateProductOption(String name, BigDecimal additionalPrice, String sku, Integer stock, Integer displayOrder){
-        this.name = name;
-        this.additionalPrice = additionalPrice;
-        this.sku = sku;
-        this.stock = stock;
-        this.displayOrder = displayOrder;
-    }
-
-    public void changeOptionGroup(ProductOptionGroup optionGroup) {
-        this.optionGroup = optionGroup;
-    }
-
-
-    public void changeName(String name) {
-        this.name = name;
-    }
-
-    public void changeAdditionalPrice(BigDecimal additionalPrice) {
-        this.additionalPrice = additionalPrice;
-    }
-
-    public void changeSku(String sku) {
-        this.sku = sku;
-    }
-
-    public void changeStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public void changeDisplayOrder(Integer displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
 }

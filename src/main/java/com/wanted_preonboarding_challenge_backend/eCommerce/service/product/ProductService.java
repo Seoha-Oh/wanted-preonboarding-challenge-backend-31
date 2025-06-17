@@ -236,23 +236,23 @@ public class ProductService implements ProductCommandHandler, ProductQueryHandle
 
         // 옵션 업데이트
         if (request.getName() != null) {
-            option.changeName(request.getName());
+            option.setName(request.getName());
         }
 
         if (request.getAdditionalPrice() != null) {
-            option.changeAdditionalPrice(request.getAdditionalPrice());
+            option.setAdditionalPrice(request.getAdditionalPrice());
         }
 
         if (request.getSku() != null) {
-            option.changeSku(request.getSku());
+            option.setSku(request.getSku());
         }
 
         if (request.getStock() != null) {
-            option.changeStock(request.getStock());
+            option.setStock(request.getStock());
         }
 
         if (request.getDisplayOrder() != null) {
-            option.changeDisplayOrder(request.getDisplayOrder());
+            option.setDisplayOrder(request.getDisplayOrder());
         }
 
         option = optionRepository.save(option);

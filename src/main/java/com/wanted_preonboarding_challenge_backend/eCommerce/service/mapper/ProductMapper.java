@@ -104,25 +104,25 @@ public class ProductMapper {
 
     public ProductDetail updateProductDetailEntity(ProductDto.Detail detail, ProductDetail productDetail) {
         if (detail.getWeight() != null) {
-            productDetail.changeWeight(detail.getWeight());
+            productDetail.setWeight(detail.getWeight());
         }
         if (detail.getDimensions() != null) {
-            productDetail.changeDimensions(convertMapToJsonString(detail.getDimensions()));
+            productDetail.setDimensions(convertMapToJsonString(detail.getDimensions()));
         }
         if (detail.getMaterials() != null) {
-            productDetail.changeMaterials(detail.getMaterials());
+            productDetail.setMaterials(detail.getMaterials());
         }
         if (detail.getCountryOfOrigin() != null) {
-            productDetail.changeCountryOfOrigin(detail.getCountryOfOrigin());
+            productDetail.setCountryOfOrigin(detail.getCountryOfOrigin());
         }
         if (detail.getWarrantyInfo() != null) {
-            productDetail.changeWarrantyInfo(detail.getWarrantyInfo());
+            productDetail.setWarrantyInfo(detail.getWarrantyInfo());
         }
         if (detail.getCareInstructions() != null) {
-            productDetail.changeCareInstructions(detail.getCareInstructions());
+            productDetail.setCareInstructions(detail.getCareInstructions());
         }
         if (detail.getAdditionalInfo() != null) {
-            productDetail.changeAdditionalInfo(convertMapToJsonString(detail.getAdditionalInfo()));
+            productDetail.setAdditionalInfo(convertMapToJsonString(detail.getAdditionalInfo()));
         }
         return productDetail;
     }

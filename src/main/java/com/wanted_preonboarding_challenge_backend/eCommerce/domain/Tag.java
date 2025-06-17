@@ -1,4 +1,6 @@
 package com.wanted_preonboarding_challenge_backend.eCommerce.domain;
+
+
 import jakarta.persistence.*;
 import lombok.*;
 

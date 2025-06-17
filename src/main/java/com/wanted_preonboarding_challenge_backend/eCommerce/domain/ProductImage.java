@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "product_image")
+@Table(name = "product_images")
 @Getter
+@Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
 public class ProductImage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,10 +35,4 @@ public class ProductImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
     private ProductOption option;
-
-
-
-    public void changeProduct(Product product) {
-        this.product = product;
-    }
 }
