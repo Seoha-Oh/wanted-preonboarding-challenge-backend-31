@@ -98,12 +98,12 @@ public class Product {
     }
 
     public void addOptionGroup(ProductOptionGroup optionGroup) {
-        optionGroup.changeProduct(this);
+        optionGroup.setProduct(this);
         optionGroups.add(optionGroup);
     }
 
     public void addImage(ProductImage image) {
-        image.changeProduct(this);
+        image.setProduct(this);
         images.add(image);
     }
 

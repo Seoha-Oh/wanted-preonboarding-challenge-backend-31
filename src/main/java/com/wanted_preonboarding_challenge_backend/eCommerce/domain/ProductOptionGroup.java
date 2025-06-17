@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "product_option_group")
+@Table(name = "product_option_groups")
 @Getter
+@Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@Builder
 public class ProductOptionGroup {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,13 +32,9 @@ public class ProductOptionGroup {
     @Builder.Default
     private List<ProductOption> options = new ArrayList<>();
 
-
+    // Helper method
     public void addOption(ProductOption option) {
-        option.changeOptionGroup(this);
+        option.setOptionGroup(this);
         options.add(option);
-    }
-
-    public void changeProduct(Product product) {
-        this.product = product;
     }
 }
